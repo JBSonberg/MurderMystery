@@ -3,9 +3,7 @@ import os
 from openai import OpenAI
 import random
 import re
-import base64
 import requests
-import json
 import time
 
 # Initialize API Key
@@ -17,7 +15,7 @@ else:
     print("[green]API key found and set.")
 client = OpenAI
 
-azure_subscription_key = "09f1044364bc4c9e83b1d618f1e66cf9"
+azure_subscription_key = os.environ.get('AZURE_BG-REMOVER')
 azure_endpoint = "https://bg-remover.cognitiveservices.azure.com/"
 
 client = OpenAI()
