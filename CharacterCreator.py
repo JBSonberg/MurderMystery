@@ -287,7 +287,7 @@ def new_character(killer, victim, gender=None, alignment=None, education=None, p
     )
     return killer, victim, relations
     
-def create_all_characters(killer, victim, relations):
+def create_all_characters(killer, victim, relations, scene_prompt):
     global character_counter
     client.beta.threads.messages.create(
         thread_id=creator_thread.id,
@@ -322,7 +322,7 @@ def create_all_characters(killer, victim, relations):
                 if message.role == 'assistant' and message.content[0].type == 'text':
                     character_profile = message.content[0].text.value
                     name, assistant, thread = create_assistant_from_profile(character_profile)
-                    picture = create_image(character_profile, name)
+                    picture = create_image(character_profile, name, scene_prompt)
                     characters.append((name, assistant, thread, killer, victim, relations, picture))
                     print(f"New assistant created with name: {name}")
                     print(f"Assistant ID: {assistant}")
@@ -363,11 +363,11 @@ def sanitize_filename(name):
     sanitized = re.sub(r'[^\w\-_\. ]', '_', name)
     return sanitized
 
-def generate_image_description(character_profile):
+def generate_image_description(character_profile, scene_prompt):
     client.beta.threads.messages.create(
         thread_id=designer_thread.id,
         role='user',
-        content=character_profile
+        content=f'Heres the scene {scene_prompt}, and here is the character profile \n\n{character_profile}'
     )
     
     run = client.beta.threads.runs.create_and_poll(
@@ -389,11 +389,11 @@ def generate_image_description(character_profile):
                 print(appearance)
     return appearance
 
-def create_image(character_profile, name):
+def create_image(character_profile, name, scene_prompt):
     clean_name = sanitize_filename(name)
     file_name = f'{clean_name}.png'
     folder_path = r"C:\Users\Jesse\Pictures\StreamAssets\Characters"
-    appearance = generate_image_description(character_profile)
+    appearance = generate_image_description(character_profile, scene_prompt)
         #old way
         # client.beta.threads.messages.create(
         #     thread_id=designer_thread.id,
@@ -479,7 +479,7 @@ def create_image(character_profile, name):
     print("Max retries reached. Failed to generate image due to content policy violations.")
     return None
 
-def main():
+def main(scene_prompt):
     num_characters = int(input("Enter the number of characters to create: "))
 
     # Initialize indices for killer and victim
@@ -523,7 +523,7 @@ def main():
             new_character(killer, victim, relations)
 
     print("\nCreating all characters...")
-    characters = create_all_characters(killer, victim, relations)
+    characters = create_all_characters(killer, victim, relations, scene_prompt)
     #print(characters)
     return characters
 

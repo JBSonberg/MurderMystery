@@ -1,0 +1,23 @@
+{
+    "characters": [
+        {
+            "name": "Thiago Nogueira",
+            "assistant_id": "asst_CQm1eYGRY65H3pmnJeGcNJ4a",
+            "thread_id": "thread_ZFIrD1nlqOYZgHPmx0uYlgfe",
+            "killer": false,
+            "victim": true,
+            "relationship_group": "",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Thiago Nogueira_mask.png"
+        },
+        {
+            "name": "Elina Virtanen",
+            "assistant_id": "asst_xPb627NjRBy90h35gSKx7mbW",
+            "thread_id": "thread_JINLiz21Cr4O1FHAgaYyc7py",
+            "killer": false,
+            "victim": true,
+            "relationship_group": "",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Elina Virtanen_mask.png"
+        }
+    ],
+    "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\horror_Utopian future.png"
+}

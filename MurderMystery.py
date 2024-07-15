@@ -238,8 +238,8 @@ class Game:
             self.fill_the_room.save_game(background)
 
 if __name__ == "__main__":
-    client = OpenAI
-    designer_thread = client.beta.threads.create()
+    client = OpenAI()
     Designer = client.beta.assistants.retrieve("asst_thL9KhFcTjZxLqhIlZGnWJZQ")
+    designer_thread = client.beta.threads.create()
     game = Game(client, designer_thread, Designer)
     game.main()
