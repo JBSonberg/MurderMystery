@@ -233,8 +233,8 @@ class Game:
             background_file = self.fill_the_room.main(load_game=True)
             self.set_the_stage.file_path = background_file
         else:
-            self.fill_the_room.main()
             self.set_the_stage.main()
+            self.fill_the_room.main()
             self.fill_the_room.save_game(self.set_the_stage.file_path)
 
 if __name__ == "__main__":
