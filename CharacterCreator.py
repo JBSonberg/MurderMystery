@@ -34,8 +34,9 @@ def get_user_input(prompt, randomize=True):
         return None  # Indicate that the value should be randomized
     return user_input
 
-def new_character(killer, victim, gender=None, alignment=None, education=None, personality=None, hobby=None, skill=None, fear=None, goal=None, accent=None, relations=None, occupation=None, health_status=None, financial_status=None,):
+def new_character(index, killer, victim, gender=None, alignment=None, education=None, personality=None, hobby=None, skill=None, fear=None, goal=None, accent=None, relations=None, occupation=None, health_status=None, financial_status=None):
     global character_counter
+    character_counter = index + 1
     
     genders = [
         "Male","Female"
@@ -256,7 +257,7 @@ def new_character(killer, victim, gender=None, alignment=None, education=None, p
         "Botched robbery", "Loyalty to a mentor", "Breaking a curse", "Covering up a scandal", "Extortion threat", 
         "Revenge for past betrayal", "Fear of losing power", "Covering up an affair"
         ]
-    character_counter += 1
+
     # Create the prompt for generating the character
     prompt = f"\nCreate a character {character_counter} with the following details:\n"
     prompt += f"\nGender: {gender}\n"
@@ -285,14 +286,19 @@ def new_character(killer, victim, gender=None, alignment=None, education=None, p
         role="user",
         content=prompt,
     )
-    return killer, victim, relations
+    return {
+        "index": index,
+        "killer": killer,
+        "victim": victim,
+        "relations": relations
+    }
     
-def create_all_characters(killer, victim, relations, scene_prompt):
+def create_all_characters(character_details, scene_prompt):
     global character_counter
     client.beta.threads.messages.create(
         thread_id=creator_thread.id,
         role="user",
-        content="You have been given a group of characters.If there are more than one and If they all belong to the same relationship group take a moment to draw connections between them. Take your time here, you are the Producer, and it is your job to make sure the Characters are compelling.",
+        content="You have been given a group of characters. If there are more than one and If they all belong to the same relationship group take a moment to draw connections between them. Take your time here, you are the Producer, and it is your job to make sure the Characters are compelling.",
     )
     client.beta.threads.runs.create_and_poll(
         thread_id=creator_thread.id,
@@ -300,11 +306,11 @@ def create_all_characters(killer, victim, relations, scene_prompt):
         response_format="auto",
     )
     characters = []
-    while character_counter > 0:
+    for details in character_details:
         client.beta.threads.messages.create(
             thread_id=creator_thread.id,
             role="user",
-            content=f"Give me Character{character_counter}",
+            content=f"Give me Character{details['index'] + 1}",
         )
         run = client.beta.threads.runs.create_and_poll(
             thread_id=creator_thread.id,
@@ -323,13 +329,13 @@ def create_all_characters(killer, victim, relations, scene_prompt):
                     character_profile = message.content[0].text.value
                     name, assistant, thread = create_assistant_from_profile(character_profile)
                     picture = create_image(character_profile, name, scene_prompt)
-                    characters.append((name, assistant, thread, killer, victim, relations, picture))
+                    characters.append((name, assistant, thread, details["killer"], details["victim"], details["relations"], picture))
                     print(f"New assistant created with name: {name}")
                     print(f"Assistant ID: {assistant}")
-                    print(f"thread ID: {thread}")
-                    print(f"Killer: {'Yes' if killer else 'No'}")
-                    print(f"Victim: {'Yes' if victim else 'No'}")
-                    print(f'The character is in relationship group: {relations}')
+                    print(f"Thread ID: {thread}")
+                    print(f"Killer: {'Yes' if details['killer'] else 'No'}")
+                    print(f"Victim: {'Yes' if details['victim'] else 'No'}")
+                    print(f"Relationship Group: {details['relations']}")
         else:
             print(run.status)
         character_counter -= 1
@@ -482,7 +488,6 @@ def create_image(character_profile, name, scene_prompt):
 def main(scene_prompt):
     num_characters = int(input("Enter the number of characters to create: "))
 
-    # Initialize indices for killer and victim
     killer_index = None
     victim_index = None
 
@@ -495,9 +500,15 @@ def main(scene_prompt):
     elif choice == "v":
         victim_index = random.choice(range(num_characters))
 
-    relations = input("Enter relationship group (or leave blank to randomize): ").strip()
+    relation_choice = input("Would you like to pick relations? (y/n): ").strip().lower()
+    if relation_choice == "y":
+        relations = input("Enter relationship group name: ").strip()
+    else:
+        relations = None
 
     customize = input("Would you like to customize characters? (y/n): ").strip().lower()
+
+    character_details = []
 
     for i in range(num_characters):
         print(f"\nCreating character {i + 1}:")
@@ -518,13 +529,14 @@ def main(scene_prompt):
             health_status = get_user_input("Enter health status (or leave blank to randomize): ")
             financial_status = get_user_input("Enter financial status (or leave blank to randomize): ")
 
-            new_character(killer, victim, gender, alignment, education, personality, hobby, skill, fear, goal, accent, relations, occupation, health_status, financial_status)
+            character_info = new_character(i, killer, victim, gender, alignment, education, personality, hobby, skill, fear, goal, accent, relations, occupation, health_status, financial_status)
         else:
-            new_character(killer, victim, relations)
+            character_info = new_character(i, killer, victim, relations)
+        
+        character_details.append(character_info)
 
     print("\nCreating all characters...")
-    characters = create_all_characters(killer, victim, relations, scene_prompt)
-    #print(characters)
+    characters = create_all_characters(character_details, scene_prompt)
     return characters
 
 # Make sure this script is only executed if this module is the main program

@@ -1,0 +1,14 @@
+{
+    "characters": [
+        {
+            "name": "Unnamed Character",
+            "assistant_id": "asst_uZGCBGfJHbq1f64BqiRpLw8b",
+            "thread_id": "thread_UMvn6A6VCWdWleuqQdTJ9KLa",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "Echo",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Unnamed Character_mask.png"
+        }
+    ],
+    "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\historical drama_Roaring Twenties.png"
+}

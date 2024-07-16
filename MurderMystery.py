@@ -230,7 +230,7 @@ class Game:
     def main(self):
         load_choice = input("Do you want to load a saved game? (y/n): ").strip().lower()
         if load_choice == 'y':
-            self.fill_the_room.main(load_game=True)
+            self.fill_the_room.main(scene_prompt=False, load_game=True)
             self.set_the_stage.load_background()
         else:
             background, scene_prompt = self.set_the_stage.main()

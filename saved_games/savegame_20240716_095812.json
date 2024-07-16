@@ -1,0 +1,23 @@
+{
+    "characters": [
+        {
+            "name": "Adanna Okoro",
+            "assistant_id": "asst_gCTa0miJR7nHDn1SDelHbq2z",
+            "thread_id": "thread_ybI3gmv5CTqVSuBU9NP9VWDt",
+            "killer": true,
+            "victim": false,
+            "relationship_group": "",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Adanna Okoro_mask.png"
+        },
+        {
+            "name": "Jackson Miller",
+            "assistant_id": "asst_BHanqEYVmgvWlGvoQt26gGox",
+            "thread_id": "thread_1h5oZdMJJl2ppkmsK7IeYYZL",
+            "killer": false,
+            "victim": true,
+            "relationship_group": "",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Jackson Miller_mask.png"
+        }
+    ],
+    "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\noir_Dystopian future.png"
+}

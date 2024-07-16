@@ -1,0 +1,23 @@
+{
+    "characters": [
+        {
+            "name": "Putri Rahayu",
+            "assistant_id": "asst_FKKZ1GZRI6pbrTdEl04H2sVN",
+            "thread_id": "thread_vBm3NzYiPEhMMl6J6UkhLt9L",
+            "killer": false,
+            "victim": true,
+            "relationship_group": "",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Putri Rahayu_mask.png"
+        },
+        {
+            "name": "Emma \"Em\" Horrocks",
+            "assistant_id": "asst_OS27VJ5OQooAo6raBp2CimFn",
+            "thread_id": "thread_sB2HlQrBLIcBVEwA3K84Gfj9",
+            "killer": true,
+            "victim": false,
+            "relationship_group": "",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Emma _Em_ Horrocks_mask.png"
+        }
+    ],
+    "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\comedy_Utopian future.png"
+}
