@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subtitle Playback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sub_styles.css') }}">
+</head>
+<body>
+    <h1>Subtitle Playback</h1>
+
+    <!-- Audio player and subtitle display area -->
+    <audio id="audio" controls>
+        <source src="/audio" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <div id="subtitles"></div>
+
+    <script src="{{ url_for('static', filename='subs_script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #0e0f0e;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: rgb(248, 245, 245);
+    margin: 20px 0;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #0206fc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    color: white;
+}
+
+.group-label {
+    text-align: center;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.log-box {
+    border: 1px solid #0206fc;
+    padding: 1px;
+    background: #0206fc;
+    height: 200px;
+    display: flex;
+    flex-direction: column-reverse; /* Show the latest message at the top */
+    position: relative; /* Make sure the position is relative for absolute children */
+    overflow: hidden; /* Hide overflow to prevent scroll bars */
+}
+
+pre {
+    color: aqua;
+    text-shadow: 4px 4px 10px #ff4444;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 25px; /* Initial font size */
+    font-weight: bold;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    position: absolute; /* Absolute positioning */
+    width: 100%; /* Fill the log box */
+    height: 100%; /* Fill the log box */
+    overflow: hidden; /* Ensure no scroll bars appear */
+}
+
+@keyframes updateLogBox {
+    from { width: 100%; }
+    to { width: 100%; }
+}
+
+@keyframes blinkTextCursor {
+    from { border-right-color: rgba(255, 255, 255, .75); }
+    to { border-right-color: transparent; }
+}
+
+pre::after {
+    content: '';
+    animation: blinkTextCursor 500ms steps(60) infinite normal;
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation Logs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Conversation Logs</h1>
+    <div class="container">
+        {% for i in range(1, 7) %}
+            <div>
+                <div class="group-label">Group {{ i }} Log</div>
+                <div class="log-box">
+                    <pre>{{ logs[i-1] }}</pre>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
