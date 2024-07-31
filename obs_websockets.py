@@ -522,7 +522,7 @@ class OBSWebsocketsManager:
             self.set_filter_visibility('GameScreen', 'Lightning', filter_enabled=False)
             time.sleep(.3)
             self.set_filter_visibility('GameScreen', 'Lightning2', filter_enabled=False)
-            time.sleep(1)
+            time.sleep(3)
             self.set_filter_visibility('GameScreen', 'Night', filter_enabled=True)
             self.set_filter_visibility('GameScreen', 'PostDeath', filter_enabled=False)
             self.set_filter_visibility('GameScreen', 'Lightning', filter_enabled=True)
@@ -550,9 +550,8 @@ if __name__ == '__main__':
     move_step = 8 # Pixels to move per step
     delay = 0.1  # Delay in seconds between each movement step
     groups = obswebsockets_manager.read_and_group_characters(json_file_path)
-    obswebsockets_manager.set_initial_positions('Characters')
+    #obswebsockets_manager.set_initial_positions('Characters')
     #obswebsockets_manager.congregate_characters('Characters', groups, move_step, delay)
-    #obswebsockets_manager.lightning()
     # obswebsockets_manager.start_background_movement('Characters', groups, move_step, delay)
     # time.sleep(100)
     # obswebsockets_manager.stop_background_movement()
@@ -560,9 +559,9 @@ if __name__ == '__main__':
     # # # print("Connecting to OBS Websockets")
     # # # obswebsockets_manager.set_all_characters_visibility(True)
     # obswebsockets_manager.set_initial_positions("Characters",)
-    obswebsockets_manager.arrange_characters_in_crescent('Characters')
+    #obswebsockets_manager.arrange_characters_in_crescent('Characters')
     # time.sleep(3)
-    obswebsockets_manager.death_position(scene_name, source_name)
+    #obswebsockets_manager.death_position(scene_name, source_name)
     
     # time.sleep(2)
     
@@ -571,7 +570,10 @@ if __name__ == '__main__':
     # #     # Example usage:
     # # # move image "test_source" in the scene "test_scene" for 60 seconds
     # # # with step movement of 5 pixels and delay of 0.1 seconds
-    # obswebsockets_manager.start_background_movement("Characters", ["G1C1", "G1C2", "G1C3", "G1C4", "G1C5", "G1C6"], move_duration=15, move_step=1, delay=0.1)
+    # obswebsockets_manager.start_background_movement("Characters", groups, move_step=1, delay=0.1)
+    # time.sleep(10)
+    # obswebsockets_manager.lightning()
+    # time.sleep(10)
     
     # for i in range(5):
     #     print("Foreground task running ...", i)
@@ -628,6 +630,6 @@ if __name__ == '__main__':
     # # obswebsockets_manager.set_image_file_path('G6C6', r'C:\Users\Jesse\Pictures\StreamAssets\Characters\Un.png')
     
     
-    #obswebsockets_manager.set_all_characters_visibility(False)
+    obswebsockets_manager.set_all_characters_visibility(False)
 
 #############################################

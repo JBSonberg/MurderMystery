@@ -1,0 +1,38 @@
+{
+    "characters": [
+        {
+            "name": " Ingrid Johansson",
+            "assistant_id": "asst_lHMzxfVztM72lUYhaXRZANIe",
+            "thread_id": "thread_kTfIQeNePPhw0OZBDx3hqA0D",
+            "killer": true,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "ZF6FPAbjXT4488VcRRnw",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\ Ingrid Johansson_mask.png",
+            "obs": "G1C1"
+        },
+        {
+            "name": " Victor Chan",
+            "assistant_id": "asst_mVKHXzNaxnobewV4LIOt08IE",
+            "thread_id": "thread_RThCnQ9Iwg4mPhTE1iPnO8GO",
+            "killer": false,
+            "victim": true,
+            "relationship_group": "B",
+            "voice": "chcMmmtY1cmQh2ye1oXi",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\ Victor Chan_mask.png",
+            "obs": "G2C1"
+        },
+        {
+            "name": " Erik Tan",
+            "assistant_id": "asst_fAcJ2bsyuX4WDyUZwCEFZhV3",
+            "thread_id": "thread_jfhifAvI3s4MV3iq7eB7p8jm",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "A",
+            "voice": "INHnGXKnJqauobZLfeOV",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\ Erik Tan_mask.png",
+            "obs": "G3C1"
+        }
+    ],
+    "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\romance_Industrial Revolution.png"
+}

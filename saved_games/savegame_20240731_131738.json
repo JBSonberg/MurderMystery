@@ -1,0 +1,225 @@
+{
+    "characters": [
+        {
+            "name": "Freja Hansen",
+            "assistant_id": "asst_r5232xkkjdvDJDyXfvPrSoex",
+            "thread_id": "thread_cd7IQLAJkhBI2KtM9kIY3q3d",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "A",
+            "voice": "UEKYgullGqaF0keqT8Bu",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Freja Hansen_mask.png",
+            "obs": "G1C1"
+        },
+        {
+            "name": "Efe Tan",
+            "assistant_id": "asst_N8lqjBIRtGtfNpKzbCgqVSum",
+            "thread_id": "thread_y81sqKoYrqpt4R3a4fipJTS5",
+            "killer": true,
+            "victim": false,
+            "relationship_group": "C",
+            "voice": "uE9Vq7t1Q44Y43s9q4fO",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Efe Tan_mask.png",
+            "obs": "G1C2"
+        },
+        {
+            "name": "Derya Yilmaz",
+            "assistant_id": "asst_qNI8Bku00lvQe2yZRwLQNJQW",
+            "thread_id": "thread_hW58ysPSsHCjdlvwt5dEzBZc",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "Gqe8GJJLg3haJkTwYj2L",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Derya Yilmaz_mask.png",
+            "obs": "G1C3"
+        },
+        {
+            "name": "Viktor \"Vik\" Petersen",
+            "assistant_id": "asst_tU7fejsyBTWrKFB5tb1HEzdn",
+            "thread_id": "thread_OF3q4ZkzSQ1vDKZswYT2Zq8B",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "GUg2TTGXDGfJpD4LNuzV",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Viktor _Vik_ Petersen_mask.png",
+            "obs": "G1C4"
+        },
+        {
+            "name": "Kaj Christensen",
+            "assistant_id": "asst_j9vQHWRtKlG9Dbz8FgukNc1r",
+            "thread_id": "thread_QYdTO050AHmEuVgXm5P99TMB",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "A",
+            "voice": "UEKYgullGqaF0keqT8Bu",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Kaj Christensen_mask.png",
+            "obs": "G2C1"
+        },
+        {
+            "name": "Perla Santos",
+            "assistant_id": "asst_RiBHb3C8NwS5ZEA2dT6K1EjN",
+            "thread_id": "thread_j1Zm8MdEzrdPOkzwKvU7P1am",
+            "killer": false,
+            "victim": true,
+            "relationship_group": "C",
+            "voice": "uE9Vq7t1Q44Y43s9q4fO",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Perla Santos_mask.png",
+            "obs": "G2C2"
+        },
+        {
+            "name": "Lara Dewi",
+            "assistant_id": "asst_ErrfBIf9PTpWBMqmL9MvA4bb",
+            "thread_id": "thread_tTgUTsSbgH2Xdgm9ZG0IgAkA",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "Gqe8GJJLg3haJkTwYj2L",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Lara Dewi_mask.png",
+            "obs": "G2C3"
+        },
+        {
+            "name": "Adam Gomez",
+            "assistant_id": "asst_hJMNu1w9CO36GUoONrHeyYt9",
+            "thread_id": "thread_HezQwfpBxVnQIhG8WM2v2x4s",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "GUg2TTGXDGfJpD4LNuzV",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Adam Gomez_mask.png",
+            "obs": "G2C4"
+        },
+        {
+            "name": "Sebastian Ya'akov",
+            "assistant_id": "asst_KiIDkWPz1iVvhJNWKcGtat58",
+            "thread_id": "thread_pIw3cTop3CBsHKWybBMBC1TQ",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "A",
+            "voice": "UEKYgullGqaF0keqT8Bu",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Sebastian Ya_akov_mask.png",
+            "obs": "G3C1"
+        },
+        {
+            "name": "Noah",
+            "assistant_id": "asst_jXCma1kR4eBoEqXRcsBN3Z1V",
+            "thread_id": "thread_gUpAO9j1usVyTMuVl93noHuy",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "C",
+            "voice": "uE9Vq7t1Q44Y43s9q4fO",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Noah_mask.png",
+            "obs": "G3C2"
+        },
+        {
+            "name": "Meryem El-Amin",
+            "assistant_id": "asst_9kmt1cCfvfaVXsLkImWsTVLC",
+            "thread_id": "thread_UvLNk4O0SvimAO27DAgXjWwb",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "Gqe8GJJLg3haJkTwYj2L",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Meryem El-Amin_mask.png",
+            "obs": "G3C3"
+        },
+        {
+            "name": "Viktor J\u00f8rgensen",
+            "assistant_id": "asst_CdStFRS7MKXZEujrQKrMNGkX",
+            "thread_id": "thread_oenvtp3uH0TAcFJ6mM8NXwHd",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "GUg2TTGXDGfJpD4LNuzV",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Viktor J\u00f8rgensen_mask.png",
+            "obs": "G3C4"
+        },
+        {
+            "name": "John Doe",
+            "assistant_id": "asst_YGZWq52jEPQ7FgQoAfvQLHyu",
+            "thread_id": "thread_uWpk4Z54k1naQyujMcBFbO2l",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "A",
+            "voice": "UEKYgullGqaF0keqT8Bu",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\John Doe_mask.png",
+            "obs": "G4C1"
+        },
+        {
+            "name": "Helena Nieminen",
+            "assistant_id": "asst_n02nbzvagwX4EtMdebVClvc1",
+            "thread_id": "thread_tVXkrvh0G7ZX1wjBfUQs9exY",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "C",
+            "voice": "uE9Vq7t1Q44Y43s9q4fO",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Helena Nieminen_mask.png",
+            "obs": "G4C2"
+        },
+        {
+            "name": "Charlotte \"Charlie\" Walsh",
+            "assistant_id": "asst_nvI2gpSzN0j8fSZ6jUzGYUHF",
+            "thread_id": "thread_1qpzPkCHu61GMjnMOm8FJodd",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "Gqe8GJJLg3haJkTwYj2L",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Charlotte _Charlie_ Walsh_mask.png",
+            "obs": "G4C3"
+        },
+        {
+            "name": "Alina Virtanen",
+            "assistant_id": "asst_UX9dEClzB05ZEqu9Tkv7WZ2t",
+            "thread_id": "thread_Kea4hFC98uHYb5FfDfUWe82o",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "GUg2TTGXDGfJpD4LNuzV",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Alina Virtanen_mask.png",
+            "obs": "G4C4"
+        },
+        {
+            "name": "Michael \"Mike\" Anderson",
+            "assistant_id": "asst_aO9vdeSYQWMdujL943cg26Dh",
+            "thread_id": "thread_Hy2w1nqeuc7d1QZHOrG4OZCM",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "A",
+            "voice": "UEKYgullGqaF0keqT8Bu",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Michael _Mike_ Anderson_mask.png",
+            "obs": "G5C1"
+        },
+        {
+            "name": "Isabella \"Bella\" Rodriguez",
+            "assistant_id": "asst_QLNceHQLR7Hb0ShS57DqoZum",
+            "thread_id": "thread_p8FDo0yAHHbyfAhERSU3LPaE",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "C",
+            "voice": "uE9Vq7t1Q44Y43s9q4fO",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Isabella _Bella_ Rodriguez_mask.png",
+            "obs": "G5C2"
+        },
+        {
+            "name": "PJ Thompson",
+            "assistant_id": "asst_Kt9WG0pyMY56AmN4MTCCPOoM",
+            "thread_id": "thread_v1GCCn0AgyYn18xPwJMaxgng",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "Gqe8GJJLg3haJkTwYj2L",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\PJ Thompson_mask.png",
+            "obs": "G5C3"
+        },
+        {
+            "name": "Greta Huber",
+            "assistant_id": "asst_qqL0D3aWN4RDantIatroMQgM",
+            "thread_id": "thread_F9G3CFvs2dzwagO3AK8TQBkf",
+            "killer": false,
+            "victim": false,
+            "relationship_group": "B",
+            "voice": "GUg2TTGXDGfJpD4LNuzV",
+            "picture": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Characters\\Greta Huber_mask.png",
+            "obs": "G5C4"
+        }
+    ],
+    "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\thriller_Stone Age.png"
+}

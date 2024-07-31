@@ -284,7 +284,7 @@ class CharacterCreator:
             motive = random.choice(motives)
             prompt += f"\nThey are the killer \n\n Motive: {motive}\n"
         else:
-            prompt += f"\nKiller: No\n Reason you are here: {goal}\n"
+            prompt += f"\nKiller: No\n\n Reason you are here: {goal}\n"
         prompt += f"\nAre they the Victim?: {'Yes' if victim else 'No'}\n"
         prompt += f"\nAlignment: {alignment}\n"
         prompt += f"\nOccupation: {occupation}\n"
@@ -361,6 +361,7 @@ class CharacterCreator:
                         print(f"Victim: {'Yes' if details['victim'] else 'No'}")
                         print(f"Relationship Group: {details['relations']}")
                         print(f"OBS source {obs}")
+                        print(f"Voice = {details['voice']}")
             else:
                 print(run.status)
         return characters
@@ -411,7 +412,7 @@ class CharacterCreator:
         self.client.beta.threads.messages.create(
             thread_id=self.designer_thread.id,
             role='user',
-            content=f'Here’s the scene {scene_prompt}, and here’s the character profile \n\n{character_profile} \n\nI need a head to toe description of them'
+            content=f'Here’s the scene {scene_prompt}, and here’s the character profile \n\n{character_profile} \n\nI need a quick description of their appearance. Max of 3 sentences'
         )
         
         run = self.client.beta.threads.runs.create_and_poll(
@@ -443,7 +444,7 @@ class CharacterCreator:
             try:            
                 response = self.client.images.generate(
                     model='dall-e-3',
-                    prompt=f'Create a full body image with our character - {name} - standing in the center \n\n {appearance}',
+                    prompt=f'Create a full body image with our character - {name} - standing in the center \n\n {appearance}\n\n There can only be one character',
                     n=1,
                     size="1024x1792",
                     response_format='url'
@@ -550,7 +551,7 @@ class CharacterCreator:
             
             character_details.append(character_info)
             
-            return character_details
+        return character_details
 
         # print("\nCreating all characters...")
         # self.create_all_characters(character_details, scene_prompt, group_num)
@@ -560,4 +561,5 @@ if __name__ == "__main__":
     scene_prompt = "Example Scene"
     group_num = 1
     creator = CharacterCreator()
-    creator.main(scene_prompt, group_num)
+    character_details = creator.main(scene_prompt, group_num)
+    creator.create_all_characters(character_details, scene_prompt, group_num)

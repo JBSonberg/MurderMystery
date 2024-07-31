@@ -97,6 +97,7 @@ class SetTheStage:
         return file_path
 
     def set_the_background(self, file_path):
+        self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=True)
         self.obs_websockets_manager.set_image_file_path('Background', file_path)
        
     def main(self):
@@ -123,17 +124,24 @@ class FillTheRoom:
 
     def create_groups(self, num_groups, scene_prompt):
         all_characters = []
+        character_details_by_group = {}
+
+        # First loop to gather character details for each group
         for group_num in range(1, num_groups + 1):
             print(f"\nCreating characters for Group {group_num}:")
-            character_details = self.create_characters.main(scene_prompt,group_num)  # Call the main function from CharacterCreator
-        
+            character_details = self.create_characters.main(scene_prompt, group_num)  # Call the main function from CharacterCreator
+            character_details_by_group[group_num] = character_details
+
+        # Second loop to create characters using the gathered details
         for group_num in range(1, num_groups + 1):
             print(f"\nCreating characters for Group {group_num}:")
-            characters = self.create_characters.create_all_characters(character_details, scene_prompt,group_num)  # Call the main function from CharacterCreator
+            character_details = character_details_by_group.get(group_num)
+            characters = self.create_characters.create_all_characters(character_details, scene_prompt, group_num)  # Call the main function from CharacterCreator
             if characters:  # Check if the returned value is not None
                 all_characters.extend(characters)
             else:
                 print(f"[Warning] Group {group_num} returned no characters.")
+
         return all_characters
 
     # def create_random_characters(self, scene_prompt):
@@ -256,7 +264,7 @@ class ConversationManager:
         return response
 
     def group_conversation(self, group, group_index, num_exchanges=5):
-        message = "Hello everyone"
+        message = "[You approach a new group of people. Discover their secrets]"
         for _ in range(num_exchanges):
             for i in range(len(group)):
                 speaker = group[i]
@@ -265,9 +273,9 @@ class ConversationManager:
                 self.log_interaction(group_index, message)
                 print(f"{speaker['name']} to group: {message}")
                 message = response
-                time.sleep(5)
+                time.sleep(8)
 
-    def create_groups(self, num_groups=4):
+    def create_groups(self, num_groups=6):
         random.shuffle(self.characters)
         groups = [[] for _ in range(num_groups)]
         for index, character in enumerate(self.characters):
@@ -366,17 +374,20 @@ class ConversationManager:
         killer_victim_same_group = False
         death = self.message_to_killer(message=False)
         self.message_to_victim(message=False)
+        prompt = "The party is going well so far! Describe what you see in the room. Don't be too specific with names for I haven't given any to you yet."
+        greeting = self.narator.greeting(prompt)
+        self.narator.send_message_to_all(greeting, self.characters)
         
         while not killer_victim_same_group:
             threads = []
             
-            prompt = "The part is going well so far! Describe what you see in the room. Don't be too specific with names for I haven't given any to you yet."
-            greeting = self.narator.greeting(prompt)
-            self.narator.send_message_to_all(greeting, self.characters)
+            # prompt = "The party is going well so far! Describe what you see in the room. Don't be too specific with names for I haven't given any to you yet."
+            # greeting = self.narator.greeting(prompt)
+            # self.narator.send_message_to_all(greeting, self.characters)
             self.obs_websockets_manager.stop_background_movement()
             self.obs_websockets_manager.congregate_characters('Characters', groups, move_step = 8, delay = 0.1)
             self.obs_websockets_manager.start_background_movement('Characters', groups, move_step=2, delay=.1)
-            self.obs_websockets_manager.set_source_visibility('Characters', 'TheLogs', True)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', True)
             self.obs_websockets_manager.set_source_visibility('Main', 'Crowd', True)
 
             for group_index, group in enumerate(groups):
@@ -427,13 +438,14 @@ class ConversationManager:
             initial_prompt = f'{victim["name"]} was murdered! They were {death}\n\n Now set the stage for our protagonist to come in and try to solve the crime.'
             message = self.narator.greeting(initial_prompt)
             self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=False)
+            self.obs_websockets_manager.stop_background_movement()
             self.obs_websockets_manager.arrange_characters_in_crescent('Characters', num_groups=6, num_characters_per_group=6, center_x=850, center_y=600, ellipse_width=1300, ellipse_height=550, screen_width=1920, screen_height=1080)
             self.obs_websockets_manager.death_position('Characters', victim['obs'])
             self.narator.send_message_to_all(message, self.characters)
             self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=True)
             self.obs_websockets_manager.lightning()
             self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
-            self.obs_websockets_manager.set_source_visibility(self, 'Main', 'DeathZoom', source_visible=True)
+            self.obs_websockets_manager.set_source_visibility('Main', 'DeathZoom', source_visible=True)
             print(f"{victim['name']} has been murdered. Begin Investigations.")
             return victim
         else:
@@ -443,7 +455,7 @@ class ConversationManager:
         characters = [char for char in self.characters if not char['victim']]
         random.shuffle(characters)
 
-        message = f"{victim['name']} has been found dead! They were {death}! Everyone, please share your thoughts."
+        message = f"{victim['name']} has been found dead! They were {death}! You think you konw who did it! It was someone you met at this party. Call them out infront of everyone."
 
         for character in characters:
             response = self.interact('Game Master', [character], message)
@@ -452,9 +464,7 @@ class ConversationManager:
             
     def main_speaker(self, character, message):
         self.elevenlabs_manager.speech_with_subtitles(character['voice'], message)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
-        self.obs_websockets_manager.pull_to_front_and_smoothly_enlarge('Characters', character['obs'], scale_factor= 1.75, step_delay=0.05)
+        self.obs_websockets_manager.pull_to_front_and_smoothly_enlarge('Characters', character['obs'], move_step = 6, step_delay=0.05)
         input('Continue? Should probably wait until done speaking')
         self.obs_websockets_manager.smoothly_reduce_and_move_back('Characters', character['obs'], move_step=6, step_delay=.1)
         
@@ -500,7 +510,7 @@ class Narator:
             self.client.beta.threads.messages.create(
                 thread_id=character['thread_id'],
                 role="user",
-                content=f"Narrator: {message}"
+                content=f"[Narrator] {message}"
             )
         self.elevenlabs_manager.speech_with_subtitles("OOk3INdXVLRmSaQoAX9D",message)
         self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
@@ -560,7 +570,7 @@ class InterviewManager:
         self.client.beta.threads.messages.create(
             thread_id=character['thread_id'],
             role='user',
-            content=message
+            content=f'[Detective]{message}'
         )
 
     def get_response_from_character(self, character):
@@ -707,6 +717,7 @@ class Game:
             characters, background = self.load_game()
             self.set_the_stage.set_the_background(background)
             self.set_character_visibility(characters)
+            self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=False)
             
         else:
             scene_prompt, background = self.set_the_stage.main()
@@ -717,6 +728,7 @@ class Game:
             print(f"Response: {greeting}")
             message = greeting
             self.narator.send_message_to_all(message,characters)
+            self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=False)
         
         if not characters:
             print("No characters created or loaded. Exiting.")
@@ -738,6 +750,31 @@ class Game:
             victim, death = self.conversation_manager.parallel_conversations(groups)
             self.conversation_manager.post_murder_reactions(victim, death)
             input('Continue?')
+        if murder_happened == 'y':
+            victim = None
+            for character in characters:
+                if character.get('victim') == True:
+                    victim = character
+                    break
+            death = "Locked in freezer"
+            self.obs_websockets_manager.set_source_visibility('Main', 'Crowd', False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
+            self.obs_websockets_manager.lightning()
+            self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
+            #initial_prompt = f'{victim["name"]} was murdered! They were {death}\n\n Now set the stage for our protagonist to come in and try to solve the crime.'
+            #message = self.narator.greeting(initial_prompt)
+            self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=False)
+            self.obs_websockets_manager.stop_background_movement()
+            self.obs_websockets_manager.arrange_characters_in_crescent('Characters', num_groups=6, num_characters_per_group=6, center_x=850, center_y=600, ellipse_width=1300, ellipse_height=550, screen_width=1920, screen_height=1080)
+            self.obs_websockets_manager.death_position('Characters', victim['obs'])
+            #self.narator.send_message_to_all(message, self.characters)
+            self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=True)
+            self.obs_websockets_manager.lightning()
+            self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'DeathZoom', source_visible=True)
+            print(f"{victim['name']} has been murdered. Begin Investigations.")
+            self.conversation_manager.post_murder_reactions(victim,death)
+            input('continue?')
         self.interview_manager = InterviewManager(self.client, characters, self.elevenlabs_manager, self.whisper, self.obs_websockets_manager, self.narator)
         self.interview_manager.main()
                 
