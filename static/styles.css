@@ -47,8 +47,7 @@ h1 {
 }
 
 pre {
-    color: aqua;
-    text-shadow: 4px 4px 10px #ff4444;
+    color: whitesmoke;
     font-family: 'Permanent Marker', cursive;
     font-size: 25px; /* Initial font size */
     font-weight: bold;

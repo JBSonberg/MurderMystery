@@ -38,5 +38,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     fetchLogs();
-    setInterval(fetchLogs, 9000); // Refresh every 9 seconds
 });

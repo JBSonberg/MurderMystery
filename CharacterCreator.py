@@ -394,7 +394,7 @@ class CharacterCreator:
 
         assistants = self.client.beta.assistants.create(
             name=name,
-            instructions=f"You are {name}. Become them and respond as they would.\n\n If you're character would use foul language you use foul language. This is for an immersive experience. Really become {name} \n Only use words, do not describe actions.\n\n{character_profile}\n\n Keep answers short. Max 6 sentences",
+            instructions=f"You are {name}. Become them and respond as they would.\n\n If you're character would use foul language you use foul language. This is for an immersive experience. Really become {name} \n Only use words, do not describe actions.\n\n In this experience, you are attending a party. You will be interacting with many other characters. There is a reason you are here, work towards that with every interaction here is your character profile \n\n {character_profile}\n\n Keep answers short. Max 6 sentences. remember you are playing a character. remaining in character is the number one priority",
             model="gpt-4o-mini"
         )
         threads = self.client.beta.threads.create()

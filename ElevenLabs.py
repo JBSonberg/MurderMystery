@@ -3,6 +3,7 @@ from elevenlabs.client import AsyncElevenLabs, ElevenLabs, RequestOptions, Outpu
 import json
 import base64
 import requests
+import uuid
 
 
 client = AsyncElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
@@ -10,8 +11,55 @@ elevenlabs = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 api_key = api_key=os.getenv("ELEVENLABS_API_KEY")
 
 class GenerateAudioManager:
+    
+    def speech_with_subtitles(self, voice_id, text):
+        temp_audio_path = f"temp_{uuid.uuid4().hex}.mp3"
+        temp_subtitle_path = f"temp_{uuid.uuid4().hex}.json"
+        
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
+        headers = {
+            "Content-Type": "application/json",
+            "xi-api-key": api_key
+        }
+
+        data = {
+            "text": text,
+            "model_id": "eleven_multilingual_v2",
+            "voice_settings": {
+                "stability": 0.5,
+                "similarity_boost": 0.75
+            }
+        }
+
+        response = requests.post(url, json=data, headers=headers)
+        if response.status_code != 200:
+            print(f"Error encountered, status: {response.status_code}, content: {response.text}")
+            return None, None
+
+        response_data = response.json()
+        audio_bytes = base64.b64decode(response_data["audio_base64"])
+
+        subtitles = []
+        if response_data.get("alignment"):
+            alignment = response_data["alignment"]
+            for i, char in enumerate(alignment["characters"]):
+                subtitle = {
+                    "character": char,
+                    "start_time": alignment["character_start_times_seconds"][i],
+                    "end_time": alignment["character_end_times_seconds"][i]
+                }
+                subtitles.append(subtitle)
+
+        with open(temp_subtitle_path, 'w') as f:
+            json.dump(subtitles, f, indent=4)
+
+        with open(temp_audio_path, 'wb') as f:
+            f.write(audio_bytes)
+
+        return temp_audio_path, temp_subtitle_path
+    
             
-    def speech_with_subtitles(self, voice_id, text, subtitle_file='subtitles.json', output_audio='output.mp3'):
+    def speech_with_subtitles_streamed(self, voice_id, text, subtitle_file='subtitles.json', output_audio='output.mp3'):
         url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream/with-timestamps"
 
         headers = {
@@ -88,7 +136,7 @@ if __name__ == "__main__":
     manager = GenerateAudioManager()
     
     # Example to generate speech with subtitles
-    voice_id = 'chcMmmtY1cmQh2ye1oXi'
+    voice_id = "VCaeNZPsLqFDctIVc5Do"
     text = "big ones, small ones, ones as big as your head"
     manager.speech_with_subtitles(voice_id, text)
     

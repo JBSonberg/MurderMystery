@@ -8,6 +8,8 @@ import json
 import time
 import threading
 import re
+import queue
+import shutil
 from obs_websockets import OBSWebsocketsManager
 from ElevenLabs import GenerateAudioManager
 from audio_player import AudioManager
@@ -156,6 +158,8 @@ class FillTheRoom:
     def save_game(self, background):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = os.path.join("saved_games", f"savegame_{timestamp}.json")
+        thread = self.client.beta.threads.create()
+        narator_thread = thread.id 
         save_data = {
             "characters": [
                 {
@@ -170,13 +174,15 @@ class FillTheRoom:
                     "obs": character[8]
                 } for character in self.all_characters
             ],
-            "background": background
+            "background": background,
+            "narator_thread": narator_thread
         }
 
         os.makedirs("saved_games", exist_ok=True)
         with open(filename, 'w') as file:
             json.dump(save_data, file, indent=4)
         print(f"Game saved to {filename}")
+        return narator_thread
                 
     def main(self, scene_prompt, load_game=False):
         if load_game:
@@ -209,6 +215,7 @@ class ConversationManager:
         self.audio_manager = audio_manager
         self.elevenlabs_manager = elevenlabs_manager
         os.makedirs(self.log_dir, exist_ok=True)
+        self.audio_queue = queue.Queue()
 
     def log_interaction(self, group_index, message):
         clean_message = self.sanitize_message(message)
@@ -264,7 +271,9 @@ class ConversationManager:
         return response
 
     def group_conversation(self, group, group_index, num_exchanges=5):
-        message = "[You approach a new group of people. Discover their secrets]"
+        message = '[Game Master] Remember to stay in characters at all times!'
+        self.narator.send_user_message_to_all(message, self.characters)
+        message = "[Approaches]"
         for _ in range(num_exchanges):
             for i in range(len(group)):
                 speaker = group[i]
@@ -273,7 +282,14 @@ class ConversationManager:
                 self.log_interaction(group_index, message)
                 print(f"{speaker['name']} to group: {message}")
                 message = response
-                time.sleep(8)
+                if group_index == 1:
+                    self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', True)
+                    random_number = random.randint(4, 8)
+                    time.sleep(random_number)
+                    self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', False)
+                else:
+                    random_number = random.randint(4, 8)
+                    time.sleep(random_number)
 
     def create_groups(self, num_groups=6):
         random.shuffle(self.characters)
@@ -437,11 +453,12 @@ class ConversationManager:
             self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
             initial_prompt = f'{victim["name"]} was murdered! They were {death}\n\n Now set the stage for our protagonist to come in and try to solve the crime.'
             message = self.narator.greeting(initial_prompt)
+            self.narator.send_message_to_all(message, self.characters)
             self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=False)
             self.obs_websockets_manager.stop_background_movement()
             self.obs_websockets_manager.arrange_characters_in_crescent('Characters', num_groups=6, num_characters_per_group=6, center_x=850, center_y=600, ellipse_width=1300, ellipse_height=550, screen_width=1920, screen_height=1080)
             self.obs_websockets_manager.death_position('Characters', victim['obs'])
-            self.narator.send_message_to_all(message, self.characters)
+            input('Press Enter to turn lights back on')
             self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=True)
             self.obs_websockets_manager.lightning()
             self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
@@ -455,37 +472,60 @@ class ConversationManager:
         characters = [char for char in self.characters if not char['victim']]
         random.shuffle(characters)
 
-        message = f"{victim['name']} has been found dead! They were {death}! You think you konw who did it! It was someone you met at this party. Call them out infront of everyone."
+        message = f"{victim['name']} has been found dead! They were {death}! You think you know who did it! It was someone you met at this party. Call them out in front of everyone."
 
-        for character in characters:
-            response = self.interact('Game Master', [character], message)
-            self.main_speaker(character, response)
-            print(f"{character['name']} reacts to the murder: {response}")
-            
-    def main_speaker(self, character, message):
-        self.elevenlabs_manager.speech_with_subtitles(character['voice'], message)
-        self.obs_websockets_manager.pull_to_front_and_smoothly_enlarge('Characters', character['obs'], move_step = 6, step_delay=0.05)
-        input('Continue? Should probably wait until done speaking')
-        self.obs_websockets_manager.smoothly_reduce_and_move_back('Characters', character['obs'], move_step=6, step_delay=.1)
+        def generate_responses():
+            for character in characters:
+                response = self.interact('Game Master', [character], message)
+                temp_audio_path, temp_subtitle_path = self.elevenlabs_manager.speech_with_subtitles(character['voice'], response)
+                
+                if temp_audio_path and temp_subtitle_path:
+                    self.audio_queue.put((temp_audio_path, temp_subtitle_path, character))
+
+        # Run the response generation in a separate thread
+        generate_thread = threading.Thread(target=generate_responses)
+        generate_thread.start()
+
+        # Start processing the queue after a short delay
+        input('wait for audio to start coming in then hit enter')
+        self.process_audio_queue()
+
+        # Wait for the response generation thread to finish
+        generate_thread.join()
+                
+    def process_audio_queue(self):
+        while not self.audio_queue.empty():
+            temp_audio_path, temp_subtitle_path, character = self.audio_queue.get()
+
+            final_audio_path = "output.mp3"
+            final_subtitle_path = "subtitles.json"
+
+            shutil.move(temp_audio_path, final_audio_path)
+            shutil.move(temp_subtitle_path, final_subtitle_path)
+            self.obs_websockets_manager.pull_to_front_and_smoothly_enlarge('Characters', character['obs'], move_step = 6, step_delay=0.05)
+            print(f"Playing audio for {character['name']}.")
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
+            input('Continue? Press Enter to move to the next reaction.')
+            self.obs_websockets_manager.smoothly_reduce_and_move_back('Characters', character['obs'], move_step=6, step_delay=.1)
         
 class Narator:
-    def __init__(self, client, elevenlabs_manager, audio_manager, obs_websockets_manager):
+    def __init__(self, client, elevenlabs_manager, audio_manager, obs_websockets_manager, narator_thread):
         self.client = client
         self.narator = self.client.beta.assistants.retrieve("asst_ysE9ZCPUe7dFXstMZmLzvaBq")  # Replace with your narator assistant ID
-        self.narator_thread = self.client.beta.threads.create()
+        self.narator_thread = narator_thread
         self.elevenlabs_manager = elevenlabs_manager
         self.audio_manager = audio_manager
         self.obs_websockets_manager = obs_websockets_manager
 
     def greeting(self, initial_prompt):
         self.client.beta.threads.messages.create(
-            thread_id=self.narator_thread.id,
+            thread_id=self.narator_thread,
             role="user",
             content=initial_prompt
         )
         
         run = self.client.beta.threads.runs.create_and_poll(
-            thread_id=self.narator_thread.id,
+            thread_id=self.narator_thread,
             assistant_id=self.narator.id,
             response_format="auto"
         )
@@ -495,7 +535,7 @@ class Narator:
         greeting = None
         if run.status == 'completed':
             thread_messages = self.client.beta.threads.messages.list(
-                thread_id=self.narator_thread.id,
+                thread_id=self.narator_thread,
                 order='desc',
                 limit=1,
             )
@@ -506,22 +546,34 @@ class Narator:
         return greeting
     
     def send_message_to_all(self, message, characters):
+        def task():
+            for character in characters:
+                self.client.beta.threads.messages.create(
+                    thread_id=character['thread_id'],
+                    role="user",
+                    content=f"[Narrator] {message}"
+                )
+            self.elevenlabs_manager.speech_with_subtitles_streamed("ZF6FPAbjXT4488VcRRnw",message)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
+        threading.Thread(target=task).start()
+        
+    def send_message_to_user(self, message):
+        def task():
+            self.elevenlabs_manager.speech_with_subtitles_streamed("ZF6FPAbjXT4488VcRRnw",message)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
+        threading.Thread(target=task).start()
+        
+    def send_user_message_to_all(self, message, characters):
         for character in characters:
             self.client.beta.threads.messages.create(
                 thread_id=character['thread_id'],
                 role="user",
-                content=f"[Narrator] {message}"
+                content=f"[Game Master] {message}"
             )
-        self.elevenlabs_manager.speech_with_subtitles("OOk3INdXVLRmSaQoAX9D",message)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
-        
-    def send_message_to_user(self, message):
-        self.elevenlabs_manager.speech_with_subtitles("OOk3INdXVLRmSaQoAX9D",message)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
 
 class InterviewManager:
     def __init__(self, client, characters, elevenlabs_manager, whisper, obs_websockets_manager, narator):
@@ -680,7 +732,6 @@ class Game:
         self.fill_the_room = FillTheRoom(self.create_characters)
         self.set_the_stage = SetTheStage(client, designer_thread, Designer, self.obs_websockets_manager)
         self.conversation_manager = None
-        self.narator = Narator(self.client, self.elevenlabs_manager, self.audio_manager, self.obs_websockets_manager)
 
     def load_game(self):
         save_dir = "saved_games"
@@ -701,40 +752,58 @@ class Game:
         
         characters = save_data["characters"]
         background = save_data["background"]
+        narator_thread = save_data["narator_thread"]
         
-        return characters, background
+        return characters, background, narator_thread
     
     def set_character_visibility(self, characters):
         for character in characters:
             source_name = character['obs']
             self.obs_websockets_manager.set_source_visibility('Characters',source_name, source_visible=True)
 
+    def update_character_images(self, characters):
+        for character in characters:
+            source_name = character['obs']
+            file_path = character['picture']
+            self.obs_websockets_manager.set_image_file_path(source_name, file_path)
+
     def main(self):
         self.obs_websockets_manager.set_all_characters_visibility(False)
+        self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=True)
         self.obs_websockets_manager.set_initial_positions('Characters', num_groups=6, num_characters_per_group=6)
         load_choice = input("Do you want to load a saved game? (y/n): ").strip().lower()
         if load_choice == 'y':
-            characters, background = self.load_game()
+            characters, background, narator_thread = self.load_game()
             self.set_the_stage.set_the_background(background)
+            self.update_character_images(characters)
             self.set_character_visibility(characters)
             self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=False)
+            self.narator = Narator(self.client, self.elevenlabs_manager, self.audio_manager, self.obs_websockets_manager, narator_thread)
+            message = self.narator.greeting(initial_prompt='Welcome Back! give a very short 1 sentence welcome to the group.')
+            self.narator.send_message_to_all(message,characters)
+            initial_message = "welcome back to the party! remember to stay true to your character at all times. Be as kind, ruthless, gentle, or devious as they would."
+            self.narator.send_user_message_to_all(initial_message, characters)
             
         else:
             scene_prompt, background = self.set_the_stage.main()
             characters = self.fill_the_room.main(scene_prompt)
-            self.fill_the_room.save_game(background)
-            initial_prompt = f'Here is the scene{scene_prompt}, Now produce a fitting greeting for our guests.'
+            narator_thread = self.fill_the_room.save_game(background)
+            self.narator = Narator(self.client, self.elevenlabs_manager, self.audio_manager, self.obs_websockets_manager, narator_thread)
+            initial_prompt = f"Here is the scene{scene_prompt}, Now produce a fitting greeting for our guests."
             greeting = self.narator.greeting(initial_prompt)
             print(f"Response: {greeting}")
-            message = greeting
-            self.narator.send_message_to_all(message,characters)
+            self.narator.send_message_to_all(greeting,characters)
+            initial_message = f'Welcome to the party, here is the theme {scene_prompt} \n\n Now you have a reason you are here, throughout all interactions work towards this. Remain in character at all times. This means that there are times you will be warm and charming, but there will also be times in which you are cold, calculated, rude, and or aggressive.'    
+            self.narator.send_user_message_to_all(initial_message, characters)
             self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=False)
+            
         
         if not characters:
             print("No characters created or loaded. Exiting.")
             return
 
         #Start PreMurder
+
         self.conversation_manager = ConversationManager(self.client, characters, self.obs_websockets_manager, self.narator, self.audio_manager, self.elevenlabs_manager)
         
         print("\nAll created characters:")
