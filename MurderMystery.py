@@ -146,15 +146,6 @@ class FillTheRoom:
 
         return all_characters
 
-    # def create_random_characters(self, scene_prompt):
-    #     print("\nCreating random characters:")
-    #     self.create_characters.main(scene_prompt)  # Call the main function from CharacterCreator
-    #     if characters:
-    #         return characters
-    #     else:
-    #         print("[Warning] No characters created.")
-    #         return []
-
     def save_game(self, background):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = os.path.join("saved_games", f"savegame_{timestamp}.json")
@@ -182,7 +173,7 @@ class FillTheRoom:
         with open(filename, 'w') as file:
             json.dump(save_data, file, indent=4)
         print(f"Game saved to {filename}")
-        return narator_thread
+        return narator_thread, filename
                 
     def main(self, scene_prompt, load_game=False):
         if load_game:
@@ -787,7 +778,7 @@ class Game:
 
     def main(self):
         self.obs_websockets_manager.set_all_characters_visibility(False)
-        self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=True)
+        self.obs_websockets_manager.set_filter_visibility('GameScreen', 'PostDeath', filter_enabled=True)
         self.obs_websockets_manager.set_initial_positions('Characters', num_groups=6, num_characters_per_group=6)
         load_choice = input("Do you want to load a saved game? (y/n): ").strip().lower()
         if load_choice == 'y':
@@ -795,13 +786,14 @@ class Game:
             self.set_the_stage.set_the_background(background)
             self.update_character_images(characters)
             self.set_character_visibility(characters)
+            self.obs_websockets_manager.move_around(file_path,'Characters', 2, .1)
             new_choice = input("Do you want to start from the beginning (y/n)?").strip().lower()
             if new_choice == 'y':
                 self.update_all_thread_ids(file_path)
                 input('Check if broken')
             else:
                 pass
-            self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=False)
+            self.obs_websockets_manager.set_filter_visibility('GameScreen', 'PostDeath', filter_enabled=False)
             self.narator = Narator(self.client, self.elevenlabs_manager, self.audio_manager, self.obs_websockets_manager, narator_thread)
             message = self.narator.greeting(initial_prompt='Welcome Back! give a very short 1 sentence welcome to the group.')
             self.narator.send_message_to_all(message,characters)
@@ -811,11 +803,11 @@ class Game:
         else:
             scene_prompt, background = self.set_the_stage.main()
             characters = self.fill_the_room.main(scene_prompt)
-            narator_thread = self.fill_the_room.save_game(background)
+            narator_thread, file_path = self.fill_the_room.save_game(background)
+            self.obs_websockets_manager.move_around(file_path,'Characters', 2, .1)
             self.narator = Narator(self.client, self.elevenlabs_manager, self.audio_manager, self.obs_websockets_manager, narator_thread)
             initial_prompt = f"Here is the scene{scene_prompt}, Now produce a fitting greeting for our guests."
             greeting = self.narator.greeting(initial_prompt)
-            print(f"Response: {greeting}")
             self.narator.send_message_to_all(greeting,characters)
             initial_message = f'Welcome to the party, here is the theme {scene_prompt} \n\n Now you have a reason you are here, throughout all interactions work towards this. Remain in character at all times. This means that there are times you will be warm and charming, but there will also be times in which you are cold, calculated, rude, and or aggressive.'    
             self.narator.send_user_message_to_all(initial_message, characters)
@@ -835,7 +827,7 @@ class Game:
         #     print(f"Character Name: {character['name']}, Assistant ID: {character['assistant_id']}, Thread ID: {character['thread_id']}, Killer: {'Yes' if character['killer'] else 'No'}, Victim: {'Yes' if character['victim'] else 'No'}, Relationship Group: {character['relationship_group']}, Picture File Path: {character['picture']}")
 
 
-        murder_happened = input("Has the murder happened yet? (y/n): ").strip().lower()
+        murder_happened = input("Has the murder happened yet? (y/n/t): yes goes to interviews, no restarts group conversations, t triggers death, remember you have to write in the death when this happens. ").strip().lower()
         if murder_happened == 'n':
             # Create groups and manage conversations
             groups = self.conversation_manager.create_groups()
@@ -843,24 +835,24 @@ class Game:
             victim, death = self.conversation_manager.parallel_conversations(groups)
             self.conversation_manager.post_murder_reactions(victim, death)
             input('Continue?')
-        if murder_happened == 'y':
+        if murder_happened == 't':
             victim = None
             for character in characters:
                 if character.get('victim') == True:
                     victim = character
                     break
-            death = "Locked in freezer"
+            death = input("how did the victim die?")
             self.obs_websockets_manager.set_source_visibility('Main', 'Crowd', False)
             self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
             self.obs_websockets_manager.lightning()
             self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
-            #initial_prompt = f'{victim["name"]} was murdered! They were {death}\n\n Now set the stage for our protagonist to come in and try to solve the crime.'
-            #message = self.narator.greeting(initial_prompt)
+            initial_prompt = f'{victim["name"]} was murdered! They were {death}\n\n Now set the stage for our protagonist to come in and try to solve the crime.'
+            message = self.narator.greeting(initial_prompt)
             self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=False)
             self.obs_websockets_manager.stop_background_movement()
             self.obs_websockets_manager.arrange_characters_in_crescent('Characters', num_groups=6, num_characters_per_group=6, center_x=850, center_y=600, ellipse_width=1300, ellipse_height=550, screen_width=1920, screen_height=1080)
             self.obs_websockets_manager.death_position('Characters', victim['obs'])
-            #self.narator.send_message_to_all(message, self.characters)
+            self.narator.send_message_to_all(message, self.characters)
             self.obs_websockets_manager.set_source_visibility('Main', 'GameScreen', source_visible=True)
             self.obs_websockets_manager.lightning()
             self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)

@@ -538,6 +538,9 @@ class OBSWebsocketsManager:
             
         threading.Thread(target=task).start()
 
+    def move_around(self, json_file_path, scene_name, move_step, delay):
+        groups = self.read_and_group_characters(json_file_path)
+        self.start_background_movement(scene_name, groups, move_step, delay)
         
 if __name__ == '__main__':
     obswebsockets_manager = OBSWebsocketsManager()
@@ -546,11 +549,13 @@ if __name__ == '__main__':
     scene_name = 'Characters'
     obswebsockets_manager.set_image_file_path("G1C1", r'C:\Users\Jesse\Pictures\StreamAssets\Characters\ Madison _Maddie_ Caldwell_mask.png')
     json_file_path = r'C:\Users\Jesse\JessesPrograms\MurderMystery\saved_games\savegame_20240717_163238.json'
-    move_duration = 25 # Duration in seconds for characters to move to their groups
-    move_step = 8 # Pixels to move per step
+    # move_duration = 25 # Duration in seconds for characters to move to their groups
+    move_step = 2 # Pixels to move per step
     delay = 0.1  # Delay in seconds between each movement step
-    groups = obswebsockets_manager.read_and_group_characters(json_file_path)
+    #groups = obswebsockets_manager.read_and_group_characters(json_file_path)
     obswebsockets_manager.set_initial_positions('Characters')
+    obswebsockets_manager.move_around(json_file_path, scene_name, move_step, delay)
+    time.sleep(10)
     #obswebsockets_manager.congregate_characters('Characters', groups, move_step, delay)
     # obswebsockets_manager.start_background_movement('Characters', groups, move_step, delay)
     # time.sleep(100)
@@ -559,11 +564,11 @@ if __name__ == '__main__':
     # # # print("Connecting to OBS Websockets")
     # # # obswebsockets_manager.set_all_characters_visibility(True)
     # obswebsockets_manager.set_initial_positions("Characters",)
-    obswebsockets_manager.arrange_characters_in_crescent('Characters')
+    #obswebsockets_manager.arrange_characters_in_crescent('Characters')
     # time.sleep(3)
-    obswebsockets_manager.death_position(scene_name, source_name)
+    #obswebsockets_manager.death_position(scene_name, source_name)
     
-    time.sleep(2)
+    #time.sleep(2)
     
     
     # time.sleep(3)

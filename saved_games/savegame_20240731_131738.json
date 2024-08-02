@@ -3,7 +3,7 @@
         {
             "name": "Freja Hansen",
             "assistant_id": "asst_r5232xkkjdvDJDyXfvPrSoex",
-            "thread_id": "thread_MXdk3VG5uDrB0dX3OxB5LW22",
+            "thread_id": "thread_AmxMoFeFSpZrS5LyfXGRTq8X",
             "killer": false,
             "victim": false,
             "relationship_group": "A",
@@ -14,7 +14,7 @@
         {
             "name": "Efe Tan",
             "assistant_id": "asst_N8lqjBIRtGtfNpKzbCgqVSum",
-            "thread_id": "thread_lRSWI3ws2RgyLYIYJKcR08zt",
+            "thread_id": "thread_gtKtZ5Z7lly6ovGQBLBxag9b",
             "killer": true,
             "victim": false,
             "relationship_group": "C",
@@ -25,7 +25,7 @@
         {
             "name": "Derya Yilmaz",
             "assistant_id": "asst_qNI8Bku00lvQe2yZRwLQNJQW",
-            "thread_id": "thread_dxHB45INWPv9fl8XgXBR13Wh",
+            "thread_id": "thread_veW2aZQT2MIW8uYNIDVkCVBc",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -36,7 +36,7 @@
         {
             "name": "Viktor \"Vik\" Petersen",
             "assistant_id": "asst_tU7fejsyBTWrKFB5tb1HEzdn",
-            "thread_id": "thread_dhqnbEhA0xxRRA04RXMm068e",
+            "thread_id": "thread_gcsQlxGDhfmKcP476M2iuHVJ",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -47,7 +47,7 @@
         {
             "name": "Kaj Christensen",
             "assistant_id": "asst_j9vQHWRtKlG9Dbz8FgukNc1r",
-            "thread_id": "thread_0GjJjlbBtY0dBhMvVygaeYSZ",
+            "thread_id": "thread_SxEIlL63SVoksVZJyiY7vBmi",
             "killer": false,
             "victim": false,
             "relationship_group": "A",
@@ -58,7 +58,7 @@
         {
             "name": "Perla Santos",
             "assistant_id": "asst_RiBHb3C8NwS5ZEA2dT6K1EjN",
-            "thread_id": "thread_yCSPyHdARevRGfMiBNmDj48B",
+            "thread_id": "thread_DbNDCMWZCffAeBuUadmLPJ1F",
             "killer": false,
             "victim": true,
             "relationship_group": "C",
@@ -69,7 +69,7 @@
         {
             "name": "Lara Dewi",
             "assistant_id": "asst_ErrfBIf9PTpWBMqmL9MvA4bb",
-            "thread_id": "thread_lIS7s8yn8vOKieNG76jMpaOV",
+            "thread_id": "thread_wd1krPdxGCCNzDYQGw4m10Tv",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -80,7 +80,7 @@
         {
             "name": "Adam Gomez",
             "assistant_id": "asst_hJMNu1w9CO36GUoONrHeyYt9",
-            "thread_id": "thread_XzjBz32iA6bGT36nXfiSVGPD",
+            "thread_id": "thread_JEWJvkErtqfQKLjpYbIKkFaQ",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -91,7 +91,7 @@
         {
             "name": "Sebastian Ya'akov",
             "assistant_id": "asst_KiIDkWPz1iVvhJNWKcGtat58",
-            "thread_id": "thread_f0e59DsYNF3WiBrjrKuicmpL",
+            "thread_id": "thread_yP6055BOHmGtRZSIFNvQvhqW",
             "killer": false,
             "victim": false,
             "relationship_group": "A",
@@ -102,7 +102,7 @@
         {
             "name": "Noah",
             "assistant_id": "asst_jXCma1kR4eBoEqXRcsBN3Z1V",
-            "thread_id": "thread_FCLO70bGCW8aYPgycuw9ARfF",
+            "thread_id": "thread_8DJMQI0vKtW1rRfGpBYdA30P",
             "killer": false,
             "victim": false,
             "relationship_group": "C",
@@ -113,7 +113,7 @@
         {
             "name": "Meryem El-Amin",
             "assistant_id": "asst_9kmt1cCfvfaVXsLkImWsTVLC",
-            "thread_id": "thread_2WoZMHHDx8i7qq4ZEqfqqEy4",
+            "thread_id": "thread_Zp2Ah05luQL15oHNIvVIm9oP",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -124,7 +124,7 @@
         {
             "name": "Viktor J\u00f8rgensen",
             "assistant_id": "asst_CdStFRS7MKXZEujrQKrMNGkX",
-            "thread_id": "thread_QPDzsocu0NOTOATQWj3AfgN7",
+            "thread_id": "thread_32TjDqVi6DxCKQ4oEAvwXHwD",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -135,7 +135,7 @@
         {
             "name": "John Doe",
             "assistant_id": "asst_YGZWq52jEPQ7FgQoAfvQLHyu",
-            "thread_id": "thread_IzBN1HMlBmhIWkm4NrDl4VgE",
+            "thread_id": "thread_A9Noyp88FbbN8dNAymIOzuSr",
             "killer": false,
             "victim": false,
             "relationship_group": "A",
@@ -146,7 +146,7 @@
         {
             "name": "Helena Nieminen",
             "assistant_id": "asst_n02nbzvagwX4EtMdebVClvc1",
-            "thread_id": "thread_4eB4cdxn86c8ZiiwsZyiMrKc",
+            "thread_id": "thread_1LnXXoItNCALisr8tM096TVS",
             "killer": false,
             "victim": false,
             "relationship_group": "C",
@@ -157,7 +157,7 @@
         {
             "name": "Charlotte \"Charlie\" Walsh",
             "assistant_id": "asst_nvI2gpSzN0j8fSZ6jUzGYUHF",
-            "thread_id": "thread_rqLBIVGG7Ot1Q53qyVtgtcTf",
+            "thread_id": "thread_f0obJF3ii9rkZPDwSAqTjWg0",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -168,7 +168,7 @@
         {
             "name": "Alina Virtanen",
             "assistant_id": "asst_UX9dEClzB05ZEqu9Tkv7WZ2t",
-            "thread_id": "thread_DJYCvAPXhCg7hCe4QxDAosMX",
+            "thread_id": "thread_nyBvlo4OBpapygDmrwSH9nNi",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -179,7 +179,7 @@
         {
             "name": "Michael \"Mike\" Anderson",
             "assistant_id": "asst_aO9vdeSYQWMdujL943cg26Dh",
-            "thread_id": "thread_x4aBtJYd26n9EQVP9uqPOaSv",
+            "thread_id": "thread_KymEhPjUfw0ASwo6PAc6t6kG",
             "killer": false,
             "victim": false,
             "relationship_group": "A",
@@ -190,7 +190,7 @@
         {
             "name": "Isabella \"Bella\" Rodriguez",
             "assistant_id": "asst_QLNceHQLR7Hb0ShS57DqoZum",
-            "thread_id": "thread_PL8ZhLUgvD9lqmQYi8uAvGO6",
+            "thread_id": "thread_TpcL6nX7PJJi9ktfRcvnZ1l5",
             "killer": false,
             "victim": false,
             "relationship_group": "C",
@@ -201,7 +201,7 @@
         {
             "name": "PJ Thompson",
             "assistant_id": "asst_Kt9WG0pyMY56AmN4MTCCPOoM",
-            "thread_id": "thread_O7gsa7F2wG9sU5ZUoiiviuhC",
+            "thread_id": "thread_qoAorA5TYA173Px4xqwIKaUG",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -212,7 +212,7 @@
         {
             "name": "Greta Huber",
             "assistant_id": "asst_qqL0D3aWN4RDantIatroMQgM",
-            "thread_id": "thread_fdWQZH4RYcnIGVK4nTu8LYR6",
+            "thread_id": "thread_yoqc2rIHEgXBSIjzTppxDSbM",
             "killer": false,
             "victim": false,
             "relationship_group": "B",
@@ -222,5 +222,5 @@
         }
     ],
     "background": "C:\\Users\\Jesse\\Pictures\\StreamAssets\\Scenes\\thriller_Stone Age.png",
-    "narator_thread": "thread_LbrOptgYchTBzQ0cmZ2NgnWK"
+    "narator_thread": "thread_hTMhbvUBx0yfqyZINRVJqIfY"
 }
