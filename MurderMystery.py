@@ -746,6 +746,7 @@ class Game:
             print(f"{idx + 1}: {file}")
         
         choice = int(input("Enter the number of the save file you want to load: ")) - 1
+        file_path = os.path.join(save_dir, save_files[choice])
         
         with open(os.path.join(save_dir, save_files[choice]), 'r') as file:
             save_data = json.load(file)
@@ -754,7 +755,24 @@ class Game:
         background = save_data["background"]
         narator_thread = save_data["narator_thread"]
         
-        return characters, background, narator_thread
+        return characters, background, narator_thread, file_path
+    
+    def update_all_thread_ids(self, filename):
+        with open(filename, 'r') as file:
+            save_data = json.load(file)
+            
+        nthread = self.client.beta.threads.create()
+        n_id = nthread.id
+        save_data["narator_thread"] = n_id
+
+        for character in save_data["characters"]:
+            thread = self.client.beta.threads.create()  # Create a new thread
+            new_thread_id = thread.id
+            character["thread_id"] = new_thread_id
+
+        with open(filename, 'w') as file:
+            json.dump(save_data, file, indent=4)
+        print(f"Thread IDs updated for all characters in {filename}") 
     
     def set_character_visibility(self, characters):
         for character in characters:
@@ -773,10 +791,16 @@ class Game:
         self.obs_websockets_manager.set_initial_positions('Characters', num_groups=6, num_characters_per_group=6)
         load_choice = input("Do you want to load a saved game? (y/n): ").strip().lower()
         if load_choice == 'y':
-            characters, background, narator_thread = self.load_game()
+            characters, background, narator_thread, file_path = self.load_game()
             self.set_the_stage.set_the_background(background)
             self.update_character_images(characters)
             self.set_character_visibility(characters)
+            new_choice = input("Do you want to start from the beginning (y/n)?").strip().lower()
+            if new_choice == 'y':
+                self.update_all_thread_ids(file_path)
+                input('Check if broken')
+            else:
+                pass
             self.obs_websockets_manager.set_filter_visibility('Background', 'PostDeath', filter_enabled=False)
             self.narator = Narator(self.client, self.elevenlabs_manager, self.audio_manager, self.obs_websockets_manager, narator_thread)
             message = self.narator.greeting(initial_prompt='Welcome Back! give a very short 1 sentence welcome to the group.')
