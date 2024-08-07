@@ -42,9 +42,9 @@ class OBSWebsocketsManager:
         self.ws.call(requests.SetInputSettings(inputName=source_name, inputSettings=current_settings))
 
         # Optionally, reset the URL back to the original to allow further refreshes
-        time.sleep(1)  # Delay to ensure the browser source refreshes
-        current_settings["url"] = url
-        self.ws.call(requests.SetInputSettings(inputName=source_name, inputSettings=current_settings))
+        # time.sleep(1)  # Delay to ensure the browser source refreshes
+        # current_settings["url"] = url
+        # self.ws.call(requests.SetInputSettings(inputName=source_name, inputSettings=current_settings))
 
     def disconnect(self):
         self.ws.disconnect()
@@ -553,9 +553,14 @@ if __name__ == '__main__':
     move_step = 2 # Pixels to move per step
     delay = 0.1  # Delay in seconds between each movement step
     #groups = obswebsockets_manager.read_and_group_characters(json_file_path)
-    obswebsockets_manager.set_initial_positions('Characters')
-    obswebsockets_manager.move_around(json_file_path, scene_name, move_step, delay)
-    time.sleep(10)
+    # obswebsockets_manager.set_initial_positions('Characters')
+    # obswebsockets_manager.move_around(json_file_path, scene_name, move_step, delay)
+    # time.sleep(10)
+    obswebsockets_manager.refresh_browser_source('Log1')
+    time.sleep(2)
+    obswebsockets_manager.refresh_browser_source('Log1')
+    obswebsockets_manager.refresh_browser_source('Log2')
+    obswebsockets_manager.refresh_browser_source('Log3')
     #obswebsockets_manager.congregate_characters('Characters', groups, move_step, delay)
     # obswebsockets_manager.start_background_movement('Characters', groups, move_step, delay)
     # time.sleep(100)

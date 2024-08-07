@@ -14,21 +14,23 @@ log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 
 
-def read_log_files():
-    logs = []
-    for i in range(1, 7):
-        log_file = os.path.join(LOG_DIR, f"group_{i}_log.txt")
-        if os.path.exists(log_file):
-            with open(log_file, 'r', encoding='utf-8') as file:
-                logs.append(file.read())
-        else:
-            logs.append(f"Log file for group {i} not found.")
-    return logs
+def read_log_file(group_number):
+    log_file = os.path.join(LOG_DIR, f"group_{group_number}_log.txt")
+    if os.path.exists(log_file):
+        with open(log_file, 'r', encoding='utf-8') as file:
+            return file.read()
+    else:
+        return f"Log file for group {group_number} not found."
 
 @app.route('/')
 def home():
-    logs = read_log_files()
+    logs = [read_log_file(i) for i in range(1, 7)]
     return render_template('index.html', logs=logs)
+
+@app.route('/log/<int:group_number>')
+def log_page(group_number):
+    log_content = read_log_file(group_number)
+    return render_template('log.html', group_number=group_number, log_content=log_content)
 
 @app.route('/static/<path:filename>')
 def static_files(filename):

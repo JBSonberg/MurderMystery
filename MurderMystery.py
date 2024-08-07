@@ -209,10 +209,24 @@ class ConversationManager:
         self.audio_queue = queue.Queue()
 
     def log_interaction(self, group_index, message):
+        def split_into_sentences(text):
+            # Use regular expressions to split text into sentences.
+            sentence_endings = re.compile(r'(?<=[.!?]) +')
+            sentences = sentence_endings.split(text)
+            return sentences
         clean_message = self.sanitize_message(message)
         log_file = os.path.join(self.log_dir, f"group_{group_index + 1}_log.txt")
-        with open(log_file, 'w', encoding='utf-8') as file:
-            file.write(f"{clean_message}\n")
+        
+        sentences = split_into_sentences(clean_message)
+        for sentence in sentences:
+            try:
+                with open(log_file, 'w', encoding='utf-8') as file:
+                    file.write(sentence + '\n')
+                    file.flush()  # Ensure the chunk is written to the file immediately
+                self.obs_websockets_manager.refresh_browser_source(f'Log{group_index + 1}')
+                time.sleep(2)
+            except Exception as e:
+                print(f"Exception while logging interaction for group {group_index}: {e}")
     
     def sanitize_message(self, message):
         # Remove leading/trailing whitespace
@@ -252,35 +266,25 @@ class ConversationManager:
 
         return ai_response
 
-    def interact(self, speaker, listeners, message):
-        for listener in listeners:
-            self.send_message(speaker, message, listener["thread_id"])
-
-        responder = random.choice(listeners)
-        response = self.get_response(responder["thread_id"], responder["assistant_id"])
+    def interact(self, speaker, listener, message):
+        self.send_message(speaker["name"], message, listener["thread_id"])
+        response = self.get_response(listener["thread_id"], listener["assistant_id"])
 
         return response
 
-    def group_conversation(self, group, group_index, num_exchanges=5):
-        message = '[Game Master] Remember to stay in characters at all times!'
-        self.narator.send_user_message_to_all(message, self.characters)
-        message = "[Approaches]"
+    def group_conversation(self, group, group_index, num_exchanges=1):
         for _ in range(num_exchanges):
             for i in range(len(group)):
                 speaker = group[i]
                 listeners = [char for j, char in enumerate(group) if j != i]
-                response = self.interact(speaker, listeners, message)
+                listener_names = ', '.join([listener['name'] for listener in listeners])
+                self.send_message('[Game Master]', f'You are in a group with {listener_names}, It is your turn to speak, Find out more about them', speaker["thread_id"])
+                message = self.get_response(speaker["thread_id"], speaker["assistant_id"])
                 self.log_interaction(group_index, message)
-                print(f"{speaker['name']} to group: {message}")
-                message = response
-                if group_index == 1:
-                    self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', True)
-                    random_number = random.randint(4, 8)
-                    time.sleep(random_number)
-                    self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', False)
-                else:
-                    random_number = random.randint(4, 8)
-                    time.sleep(random_number)
+                for listener in listeners:
+                    response = self.interact(speaker, listener, message)
+                    self.log_interaction(group_index, response)  # Log the response instead of the initial message
+                    #print(f"{speaker['name']} to group: {response}")
 
     def create_groups(self, num_groups=6):
         random.shuffle(self.characters)
@@ -377,13 +381,13 @@ class ConversationManager:
             content=f"[Game Master] {message}\n\n Don't directly tell anyone but {killer} is here to kill you. Be cautious of them and let a few clues slip in your conversations."
         )
                 
-    def parallel_conversations(self, groups, num_exchanges=5):
+    def parallel_conversations(self, groups, num_exchanges=1):
         killer_victim_same_group = False
         death = self.message_to_killer(message=False)
         self.message_to_victim(message=False)
         prompt = "The party is going well so far! Describe what you see in the room. Don't be too specific with names for I haven't given any to you yet."
         greeting = self.narator.greeting(prompt)
-        self.narator.send_message_to_all(greeting, self.characters)
+        self.narator.send_message_to_user(greeting)
         
         while not killer_victim_same_group:
             threads = []
@@ -396,7 +400,8 @@ class ConversationManager:
             self.obs_websockets_manager.start_background_movement('Characters', groups, move_step=2, delay=.1)
             self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', True)
             self.obs_websockets_manager.set_source_visibility('Main', 'Crowd', True)
-
+            gm_message = 'Remember to stay in characters at all times! Remember this is a party, if you are not labeled the killer then you are here to have fun and mingle. Learn about others lives and talk about your own.'
+            self.narator.send_user_message_to_all(gm_message, self.characters)
             for group_index, group in enumerate(groups):
                 thread = threading.Thread(target=self.group_conversation, args=(group, group_index, num_exchanges))
                 threads.append(thread)
@@ -439,7 +444,8 @@ class ConversationManager:
         
         if victim:
             self.obs_websockets_manager.set_source_visibility('Main', 'Crowd', False)
-            self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', False)
+            self.obs_websockets_manager.set_source_visibility('Main', 'Opera', False)
             self.obs_websockets_manager.lightning()
             self.audio_manager.play_audio('Sounds\Lightning.mp3', sleep_during_playback=False, delete_file=False, play_using_music=False)
             initial_prompt = f'{victim["name"]} was murdered! They were {death}\n\n Now set the stage for our protagonist to come in and try to solve the crime.'
@@ -495,9 +501,11 @@ class ConversationManager:
             shutil.move(temp_subtitle_path, final_subtitle_path)
             self.obs_websockets_manager.pull_to_front_and_smoothly_enlarge('Characters', character['obs'], move_step = 6, step_delay=0.05)
             print(f"Playing audio for {character['name']}.")
+            self.obs_websockets_manager.refresh_browser_source('TheSubs')
             self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
             input('Continue? Press Enter to move to the next reaction.')
             self.obs_websockets_manager.smoothly_reduce_and_move_back('Characters', character['obs'], move_step=6, step_delay=.1)
+            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
         
 class Narator:
     def __init__(self, client, elevenlabs_manager, audio_manager, obs_websockets_manager, narator_thread):
@@ -545,7 +553,7 @@ class Narator:
                     content=f"[Narrator] {message}"
                 )
             self.elevenlabs_manager.speech_with_subtitles_streamed("ZF6FPAbjXT4488VcRRnw",message)
-            self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
+            self.obs_websockets_manager.refresh_browser_source('TheSubs')
             self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
             self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
         threading.Thread(target=task).start()
@@ -598,12 +606,12 @@ class InterviewManager:
                 break
             elif user_choice == 'y':
                 print(f"Listening... please speak your message to {character['name']}.")
-                user_message = self.whisper.speechtotext_from_mic_continuous()
+                user_message = f'[Detective]{self.whisper.speechtotext_from_mic_continuous()}'
                 print(f"You said: {user_message}")
 
                 self.send_message_to_character(character, user_message)
                 response = self.get_response_from_character(character)
-                print(f"{character['name']} says: {response}")
+                #print(f"{character['name']} says: {response}")
                 self.speak_response(character, response)
             else:
                 print("Invalid choice. Please enter 'y' or 'n'.")
@@ -613,7 +621,7 @@ class InterviewManager:
         self.client.beta.threads.messages.create(
             thread_id=character['thread_id'],
             role='user',
-            content=f'[Detective]{message}'
+            content=message
         )
 
     def get_response_from_character(self, character):
@@ -638,9 +646,7 @@ class InterviewManager:
 
     def speak_response(self, character, message):
         self.elevenlabs_manager.speech_with_subtitles(character['voice'], message)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheLogs', source_visible=False)
-        self.obs_websockets_manager.set_source_visibility('Main', 'TheSubs', source_visible=True)
+        self.obs_websockets_manager.refresh_browser_source('TheSubs')
         
     def main_speaker(self, character, message):
         # Use ElevenLabs for TTS
@@ -664,7 +670,9 @@ class InterviewManager:
                     if character['killer']:
                         self.obs_websockets_manager.set_source_visibility('Main', 'Win', True)
                         time.sleep(.1)
+                        gothim = '[Game Master] You have been correctly identified as the killer. explain how and why you did it, similar to how scoobie doo episodes wrap up.'
                         self.obs_websockets_manager.pull_to_front_and_smoothly_enlarge('Characters', character['obs'], move_step=8, step_delay=.1)
+                        self.send_message_to_character(character,gothim)
                         prompt = f"Our great detective has solved the case and discovered that {character['name']} was the Killer. Now wrap this story up with a final fairwell"
                         print(f"You have accused {character['name']}, and you are correct! The game is over.")
                         message = self.narator.greeting(prompt)
