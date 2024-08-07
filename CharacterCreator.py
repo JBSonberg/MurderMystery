@@ -444,7 +444,7 @@ class CharacterCreator:
             try:            
                 response = self.client.images.generate(
                     model='dall-e-3',
-                    prompt=f'Create a full body image with our character - {name} - standing in the center \n\n {appearance}\n\n There can only be one character',
+                    prompt=f'Create a full body image with our character - {name} - standing in the center \n\n {appearance}',
                     n=1,
                     size="1024x1792",
                     response_format='url'

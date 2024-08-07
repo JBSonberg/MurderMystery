@@ -109,9 +109,10 @@ class SetTheStage:
         return scene_prompt, file_path
 
 class FillTheRoom:
-    def __init__(self, create_characters):
+    def __init__(self, create_characters, client):
         self.all_characters = []
         self.create_characters = create_characters
+        self.client = client
 
     def get_number_of_groups(self):
         while True:
@@ -728,7 +729,7 @@ class Game:
         self.elevenlabs_manager = GenerateAudioManager()
         self.audio_manager = AudioManager()
         self.obs_websockets_manager = OBSWebsocketsManager()
-        self.fill_the_room = FillTheRoom(self.create_characters)
+        self.fill_the_room = FillTheRoom(self.create_characters, self.client)
         self.set_the_stage = SetTheStage(client, designer_thread, Designer, self.obs_websockets_manager)
         self.conversation_manager = None
 
